@@ -13,19 +13,19 @@ import java.net.InetSocketAddress
 
 object NetController extends App {
 
-  class Controller(connection: ActorRef, remote: InetSocketAddress) extends Actor with ActorLogging {
+  private class Controller(connection: ActorRef, remote: InetSocketAddress) extends Actor with ActorLogging {
 
     context.watch(connection)
 
-    val cmdMapping: Map[String, ActorRef => MusicBox] = Map(
+    private val cmdMapping: Map[String, ActorRef => MusicBox] = Map(
       "/list" -> ListMusic,
       "/play" -> PlayMusic,
       "/pause" -> PauseMusic
     )
-    protected def tracks(str: String): List[String] =
+    private def tracks(str: String): List[String] =
       str.substring(10).split(",").toList
 
-    protected def createCommand(strCmd: String): MusicBox = {
+    private def createCommand(strCmd: String): MusicBox = {
       cmdMapping.get(strCmd.trim) match {
         case None if strCmd.startsWith("/schedule") =>
           val track = tracks(strCmd)
@@ -65,7 +65,7 @@ object NetController extends App {
   )
   import com.aidokay.music.tracks.MusicProviders.mp3Provider
   implicit val audioProvider: AudioProvider[String] = mp3Provider("V:\\MusicPhotos\\music")
-  val jokeBoxHandler =
+  private val jokeBoxHandler =
     system.spawn(new JokeBoxHandler(audioProvider).apply(), "jokeBoxHandler")
 
   StreamHttpServer.startHttpServer(routes = new StreamingRoutes(jokeBoxHandler).streamRoutes)
