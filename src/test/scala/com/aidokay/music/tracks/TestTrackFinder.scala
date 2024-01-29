@@ -11,7 +11,7 @@ class TestTrackFinder
 
   "TrackFileLoader.load()" should {
     "get a list of mp3 files" in {
-      val result = TracksFinder.map3FileFinder.load("V:\\MusicPhotos\\music")
+      val result = TracksFinder.audioFileFinder(".mp3").load("V:\\MusicPhotos\\music")
       result.size should ===(53)
     }
   }

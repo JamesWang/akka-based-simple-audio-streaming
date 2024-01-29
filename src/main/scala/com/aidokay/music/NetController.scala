@@ -63,8 +63,8 @@ object NetController extends App {
     Props(classOf[MusicManager], classOf[Controller]),
     "netController"
   )
-  import com.aidokay.music.tracks.MusicProviders.mp3Provider
-  implicit val audioProvider: AudioProvider[String] = mp3Provider("V:\\MusicPhotos\\music")
+  import com.aidokay.music.tracks.MusicProviders.musicProvider
+  implicit val audioProvider: AudioProvider[String] = musicProvider("V:\\MusicPhotos\\music")
   private val jokeBoxHandler =
     system.spawn(new JokeBoxHandler(audioProvider).apply(), "jokeBoxHandler")
 

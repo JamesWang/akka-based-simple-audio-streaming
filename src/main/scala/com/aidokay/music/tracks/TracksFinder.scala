@@ -8,28 +8,25 @@ object TracksFinder {
     def load(loc: T): F[O]
   }
 
-  trait MusicTrack[T] {
+  private trait MusicTrack[T] {
     def isMusic(t: T): Boolean
   }
 
-  class MusicFileFilter(extPattern: String) extends MusicTrack[String] {
+  private class MusicFileFilter(extPattern: String) extends MusicTrack[String] {
     def isMusic(name: String): Boolean = name.endsWith(extPattern)
   }
 
-  class TrackFileLoader(musicFile: MusicTrack[String])
-      extends TrackLoader[List, String] {
+  class TrackFileLoader(musicFile: MusicTrack[String]) extends TrackLoader[List, String] {
     override type O = String
 
     private def listOfFiles(loc: File): List[String] = {
-      Option(loc.listFiles) match {
-        case Some(files) =>
+      val files = loc.listFiles
+      if (files != null){
           files.map(_.getName).filter(musicFile.isMusic).toList
-        case None => Nil
-      }
+      } else Nil
     }
-
     override def load(loc: String): List[O] = listOfFiles(new File(loc))
   }
 
-  val map3FileFinder = new TrackFileLoader(new MusicFileFilter(".mp3"))
+  def audioFileFinder(ext: String) = new TrackFileLoader(new MusicFileFilter(ext))
 }
