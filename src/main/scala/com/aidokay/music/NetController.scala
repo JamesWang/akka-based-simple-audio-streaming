@@ -41,18 +41,16 @@ object NetController extends App {
     }
 
     override def receive: Receive = { case Received(command) =>
-      val cmd = createCommand(command.utf8String.trim)
-      cmd match {
-        case ListMusic(_) =>
+      createCommand(command.utf8String.trim) match {
+        case cmd @ ListMusic(_) =>
           jokeBoxHandler ! cmd
           context.become { case ListedMusic(music) =>
             println(s"listed music: $music")
             connection ! Write(ByteString.fromString(music.mkString("\n")))
             context.unbecome()
           }
-        case _ => jokeBoxHandler ! cmd
+        case cmd => jokeBoxHandler ! cmd
       }
-
     }
   }
   val config: Config = ConfigFactory.parseString("akka.loglevel = DEBUG")
