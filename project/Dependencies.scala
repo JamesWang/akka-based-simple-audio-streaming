@@ -18,34 +18,25 @@ object Dependencies {
   }
 
   object Libraries {
-    def akka(artifact: String): ModuleID  = "com.typesafe.akka"       %%  artifact              % Versions.akka
-    def akkaHttp(artifact: String): ModuleID  = "com.typesafe.akka"   %% s"akka-http$artifact"  % Versions.akkaHttp
+    def akkaOf(artifact: String): ModuleID  = "com.typesafe.akka"       %%  artifact              % Versions.akka
+    def akkaHttpOf(artifact: String=""): ModuleID  = "com.typesafe.akka"   %% s"akka-http$artifact"  % Versions.akkaHttp
 
-    val akka      = akka("akka-actor-typed")
-    val akkaHttp  = akkaHttp("akka-http")
-    val akkaJson  = akkaHttp("-spray-json")
-    val akkaLog   = akka("akka-slf4j")
+    val akka      = akkaOf("akka-actor-typed")
+    val akkaHttp  = akkaHttpOf("")
+    val akkaJson  = akkaHttpOf("-spray-json")
+    val akkaLog   = akkaOf("akka-slf4j")
 
     val cats      = "org.typelevel"      %% "cats-core"             % Versions.cats
     val logBack   = "ch.qos.logback"      % "logback-classic"       % Versions.logBack
 
 
     //tests
-    val akkaTestkit  = akka("akka-actor-testkit-typed") % Test
-    val akkaHttpTest = akkaHttp("-testkit")             % Test
+    val akkaTestkit  = akkaOf("akka-actor-testkit-typed") % Test
+    val akkaHttpTest = akkaHttpOf("-testkit")             % Test
 
     val scalaTest    = "org.scalatest" %% "scalatest"       % Versions.scalaTest % Test
   }
 
   object CompilerPlugin {
-    val betterMonadicFor = compilerPlugin(
-      "com.olegpy" %% "better-monadic-for" % Versions.betterMonadicFor
-    )
-    val kindProjector = compilerPlugin(
-      "org.typelevel" % "kind-projector" % Versions.kindProjector cross CrossVersion.full
-    )
-    val semanticDB = compilerPlugin(
-      "org.scalameta" % "semanticdb-scalac" % Versions.semanticDB cross CrossVersion.full
-    )
   }
 }
