@@ -18,6 +18,7 @@ object MusicDownloader {
         message match {
           case DownloadMusic(track, replyTo) =>
             replyTo ! DownloadInfo(TrackLocation(audioProvider.location), track)
+          case _ =>
         }
         Behaviors.same
       }

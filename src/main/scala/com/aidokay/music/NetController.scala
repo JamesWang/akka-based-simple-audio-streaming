@@ -2,7 +2,13 @@ package com.aidokay.music
 
 import akka.actor.typed.scaladsl.adapter.ClassicActorSystemOps
 import akka.actor.typed.ActorSystem
-import akka.actor.{Actor, ActorLogging, ActorRef, Props, ActorSystem => ClassicAS}
+import akka.actor.{
+  Actor,
+  ActorLogging,
+  ActorRef,
+  Props,
+  ActorSystem => ClassicAS
+}
 import akka.io.Tcp.{Received, Write}
 import akka.util.ByteString
 import com.aidokay.music.JokeBox._
@@ -13,14 +19,16 @@ import java.net.InetSocketAddress
 
 object NetController extends App {
 
-  private class Controller(connection: ActorRef, remote: InetSocketAddress) extends Actor with ActorLogging {
+  private class Controller(connection: ActorRef, remote: InetSocketAddress)
+      extends Actor
+      with ActorLogging {
 
     context.watch(connection)
 
     private val cmdMapping: Map[String, ActorRef => MusicBox] = Map(
-      "/list" -> ListMusic,
-      "/play" -> PlayMusic,
-      "/pause" -> PauseMusic
+      "/list" -> ListMusic.apply,
+      "/play" -> PlayMusic.apply,
+      "/pause" -> PauseMusic.apply
     )
     private def tracks(str: String): List[String] =
       str.substring(10).split(",").toList
@@ -62,9 +70,13 @@ object NetController extends App {
     "netController"
   )
   import com.aidokay.music.tracks.MusicProviders.musicProvider
-  implicit val audioProvider: AudioProvider[String] = musicProvider("V:\\MusicPhotos\\music")
+  implicit val audioProvider: AudioProvider[String] = musicProvider(
+    "V:\\MusicPhotos\\music"
+  )
   private val jokeBoxHandler =
     system.spawn(new JokeBoxHandler(audioProvider).apply(), "jokeBoxHandler")
 
-  StreamHttpServer.startHttpServer(routes = new StreamingRoutes(jokeBoxHandler).streamRoutes)
+  StreamHttpServer.startHttpServer(routes =
+    new StreamingRoutes(jokeBoxHandler).streamRoutes
+  )
 }
