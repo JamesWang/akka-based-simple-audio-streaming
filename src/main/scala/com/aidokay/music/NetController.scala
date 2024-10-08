@@ -62,15 +62,15 @@ object NetController extends App {
     }
   }
   val config: Config = ConfigFactory.parseString("akka.loglevel = DEBUG")
-  implicit val system: ClassicAS = ClassicAS("MusicNetController", config)
-  implicit val typedSystem: ActorSystem[Nothing] = system.toTyped
+  given system: ClassicAS = ClassicAS("MusicNetController", config)
+  given typedSystem: ActorSystem[Nothing] = system.toTyped
 
   system.actorOf(
     Props(classOf[MusicManager], classOf[Controller]),
     "netController"
   )
   import com.aidokay.music.tracks.MusicProviders.musicProvider
-  implicit val audioProvider: AudioProvider[String] = musicProvider(
+  given audioProvider: AudioProvider[String] = musicProvider(
     "V:\\MusicPhotos\\music"
   )
   private val jokeBoxHandler =

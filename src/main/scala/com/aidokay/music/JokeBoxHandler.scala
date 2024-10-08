@@ -45,19 +45,19 @@ class JokeBoxHandler(audioProvider: AudioProvider[String]) {
       }
     }
 
-  def play()(implicit ctx: ActorContext[MusicBox]): Unit = {
+  def play()(using ctx: ActorContext[MusicBox]): Unit = {
     jokeBoxData.updateCurrentState(Playing)
   }
-  def pause()(implicit ctx: ActorContext[MusicBox]): Unit = {
+  def pause()(using ctx: ActorContext[MusicBox]): Unit = {
     jokeBoxData.updateCurrentState(Paused)
   }
 
-  def list(replyTo: ActorRef)(implicit ctx: ActorContext[MusicBox]): Unit = {
+  def list(replyTo: ActorRef)(using ctx: ActorContext[MusicBox]): Unit = {
     replyTo ! ListedMusic(audioProvider.audioList())
   }
 
-  def schedule(tracks: List[String], replyTo: ActorRef)(implicit
-      ctx: ActorContext[MusicBox]
+  def schedule(tracks: List[String], replyTo: ActorRef)(
+      using ctx: ActorContext[MusicBox]
   ): Unit = {
     if (tracks.contains("all")) {
       ctx.log.info("scheduling all found music")
@@ -68,22 +68,24 @@ class JokeBoxHandler(audioProvider: AudioProvider[String]) {
     }
   }
 
-  val timedSource: Source[() => ByteString, Cancellable] =
+  private val timedSource: Source[() => ByteString, Cancellable] =
     Source.tick(1.second, 200.millisecond, streamAudioChunk().next)
 
-  def runnableGraph(): RunnableGraph[Source[ByteString, NotUsed]] =
+  private def runnableGraph(): RunnableGraph[Source[ByteString, NotUsed]] =
     timedSource.map(_())
       .toMat(
         BroadcastHub.sink[ByteString](bufferSize = 64)
       )(Keep.right)
 
-  val fromProducer: Source[ByteString, NotUsed] = runnableGraph().run()
+  private val fromProducer: Source[ByteString, NotUsed] = runnableGraph().run()
 
   def apply(): Behavior[MusicBox] = {
     //TODO
     var streamerInstance: Option[Cancellable] = None
     Behaviors.setup { context =>
-      implicit val ctx: ActorContext[MusicBox] = context
+
+      given ActorContext[MusicBox] = context
+
       val musicDownloader = context.spawn(new TrackInfoProvider(audioProvider).apply(), "musicDownloader")
       Behaviors.receiveMessage { message =>
         context.log.info(s"Received: $message")

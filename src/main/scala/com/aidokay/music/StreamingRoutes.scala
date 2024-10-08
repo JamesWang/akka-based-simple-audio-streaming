@@ -14,7 +14,7 @@ import com.aidokay.music.JokeBox.{DownloadInfo, DownloadMusic, MusicBox, Subscri
 import scala.concurrent.Future
 
 class StreamingRoutes(musicSubscriber: ActorRef[MusicBox])(implicit val system: ActorSystem[_]) {
-  private implicit val timeout: Timeout = Timeout.create(
+  private given timeout: Timeout = Timeout.create(
     system.settings.config.getDuration("music-streamer.routes.ask-timeout")
   )
 
@@ -23,7 +23,7 @@ class StreamingRoutes(musicSubscriber: ActorRef[MusicBox])(implicit val system: 
   private def mp3(subType: String): ContentType.Binary = ContentType(
     MediaType.audio( subType, comp = Compressible, fileExtensions = "mp3")
   )
-  def askForTrackLocation(track: String): Future[DownloadInfo] = musicSubscriber.ask(DownloadMusic.apply(track, _))
+  private def askForTrackLocation(track: String): Future[DownloadInfo] = musicSubscriber.ask(DownloadMusic.apply(track, _))
 
   val streamRoutes: Route = {
     concat(
