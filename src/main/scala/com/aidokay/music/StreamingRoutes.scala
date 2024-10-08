@@ -18,7 +18,7 @@ class StreamingRoutes(musicSubscriber: ActorRef[MusicBox])(implicit val system: 
     system.settings.config.getDuration("music-streamer.routes.ask-timeout")
   )
 
-  private def generateMusicSource(): Future[Subscribed] = musicSubscriber.ask(SubscribeMusic)
+  private def generateMusicSource(): Future[Subscribed] = musicSubscriber.ask(SubscribeMusic.apply)
 
   private def mp3(subType: String): ContentType.Binary = ContentType(
     MediaType.audio( subType, comp = Compressible, fileExtensions = "mp3")

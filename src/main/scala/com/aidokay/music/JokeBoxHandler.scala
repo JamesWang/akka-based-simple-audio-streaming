@@ -80,6 +80,7 @@ class JokeBoxHandler(audioProvider: AudioProvider[String]) {
   val fromProducer: Source[ByteString, NotUsed] = runnableGraph().run()
 
   def apply(): Behavior[MusicBox] = {
+    //TODO
     var streamerInstance: Option[Cancellable] = None
     Behaviors.setup { context =>
       implicit val ctx: ActorContext[MusicBox] = context
@@ -99,6 +100,7 @@ class JokeBoxHandler(audioProvider: AudioProvider[String]) {
             musicDownloader ! dld
           case Cancel =>
             streamerInstance.foreach(_.cancel())
+          case com.aidokay.music.JokeBox.ListedMusic(musics) => println(musics)
         }
         Behaviors.same
       }

@@ -8,7 +8,7 @@ object TracksFinder {
     def load(loc: T): F[O]
   }
 
-  private trait MusicTrack[T] {
+  trait MusicTrack[T] {
     def isMusic(t: T): Boolean
   }
 

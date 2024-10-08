@@ -1,4 +1,4 @@
-import Dependencies.{CompilerPlugin, Libraries}
+import Dependencies.Libraries
 
 ThisBuild / version := "0.1.0-SNAPSHOT"
 
@@ -14,6 +14,7 @@ libraryDependencies ++= Seq(
 
   Libraries.akka,
   Libraries.akkaHttp,
+  Libraries.akkStream,
   Libraries.cats,
   Libraries.akkaJson,
   Libraries.akkaLog,

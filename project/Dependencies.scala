@@ -22,9 +22,10 @@ object Dependencies {
     def akkaHttpOf(artifact: String=""): ModuleID  = "com.typesafe.akka"   %% s"akka-http$artifact"  % Versions.akkaHttp
 
     val akka      = akkaOf("akka-actor-typed")
-    val akkaHttp  = akkaHttpOf("")
+    val akkaHttp  = akkaHttpOf()
     val akkaJson  = akkaHttpOf("-spray-json")
     val akkaLog   = akkaOf("akka-slf4j")
+    val akkStream = akkaOf("akka-stream")
 
     val cats      = "org.typelevel"      %% "cats-core"             % Versions.cats
     val logBack   = "ch.qos.logback"      % "logback-classic"       % Versions.logBack
