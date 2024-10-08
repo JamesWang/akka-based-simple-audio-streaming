@@ -7,7 +7,7 @@ import akka.http.scaladsl.server.Route
 import scala.util.{Failure, Success}
 
 object StreamHttpServer {
-  def startHttpServer(routes: Route)(implicit system: ActorSystem[_]): Unit = {
+  def startHttpServer(routes: Route)(using system: ActorSystem[_]): Unit = {
     // Akka HTTP still needs a classic ActorSystem to start
     import system.executionContext
     val futureBinding = Http().newServerAt("0.0.0.0", 8080).bind(routes)

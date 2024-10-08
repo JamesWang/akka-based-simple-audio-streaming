@@ -14,7 +14,7 @@ object MusicDownloader {
 
     def apply(): Behavior[MusicBox] = {
       Behaviors.receive { (context, message) =>
-        implicit val ctx: ActorContext[MusicBox] = context
+        given ActorContext[MusicBox] = context
         message match {
           case DownloadMusic(track, replyTo) =>
             replyTo ! DownloadInfo(TrackLocation(audioProvider.location), track)
