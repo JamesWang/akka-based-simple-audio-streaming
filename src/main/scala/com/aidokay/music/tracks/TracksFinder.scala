@@ -17,16 +17,16 @@ object TracksFinder {
   }
 
   class TrackFileLoader(musicFile: MusicTrack[String]) extends TrackLoader[List, String] {
+
     override type O = String
 
     private def listOfFiles(loc: File): List[String] = {
-      val files = loc.listFiles
-      if (files != null){
-          files.map(_.getName).filter(musicFile.isMusic).toList
-      } else Nil
+      loc.listFiles.map(_.getName).filter(musicFile.isMusic).toList
     }
     override def load(loc: String): List[O] = listOfFiles(new File(loc))
   }
 
-  def audioFileFinder(ext: String) = new TrackFileLoader(new MusicFileFilter(ext))
+  def audioFileFinder(ext: String) = new TrackFileLoader(
+    new MusicFileFilter(ext)
+  )
 }
